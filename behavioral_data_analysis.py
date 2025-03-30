@@ -22,35 +22,3 @@ output_folder = './output'
 #%%
 
 #We need a function to load the multi-index data
-
-def load_multi_index_csv_as_df(path, index_cols):
-    """
-    Loads a CSV and applies transform_df_types, then sets MultiIndex.
-    """
-    df = pd.read_csv(path)
-
-    # Protect index columns from being cast to int
-    preserve_cols = index_cols + ['time_s','batch', 'session', 'rp_rm']
-    df = transform_df_types(df, preserve_cols=preserve_cols)
-
-    df.set_index(index_cols, inplace=True)
-    return df
-
-def transform_df_types(df, preserve_cols=None):
-    """
-    Casts all columns to int, except for columns in preserve_cols (kept as strings).
-    Ignores non-numeric values.
-    """
-    if preserve_cols is None:
-        preserve_cols = ['batch', 'session', 'rp_rm']
-
-    for col in df.columns:
-        if col in preserve_cols:
-            df[col] = df[col].astype(str)
-        else:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
-
-    return df
-
-
-#%%
